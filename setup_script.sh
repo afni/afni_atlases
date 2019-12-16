@@ -25,4 +25,5 @@ datalad create-sibling  --as-common-datasrc afni_server  --ui true  --target-url
 # datalad create-sibling-github  --github-organization afni --existing reconfigure --publish-depends afni_server --access-protocol ssh afni_atlases
 
 # Publish
+# git push -u github master:master
 # datalad publish
