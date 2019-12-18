@@ -7,8 +7,8 @@ datalad create -c text2git afni_atlases/
 cd afni_atlases/
 
 # Stringent conditions for what a "big" file is:
-echo '**/.git* annex.largefiles=nothing' >> .gitattributes
-datalad save -m 'everything is a large file'
+#echo '**/.git* annex.largefiles=nothing' >> .gitattributes
+#datalad save -m 'everything is a large file'
 
 # Get the atlases
 datalad run -m 'add atlases' 'rsync  -a afni:/fraid/pub/dist/atlases/current/* atlases'
