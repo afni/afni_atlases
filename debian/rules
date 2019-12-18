@@ -1,45 +1,21 @@
 #!/usr/bin/make -f
 
-srcpkg = $(shell LC_ALL=C dpkg-parsechangelog | grep '^Source:' | cut -d ' ' -f 2,2)
-upstreamver = $(shell LC_ALL=C dpkg-parsechangelog | grep '^Version:' | cut -d ' ' -f 2,2 | cut -d '-' -f 1,1)
-upstreamtarball = linux_xorg7.tgz
-upstreamurl = https://afni.nimh.nih.gov/pub/dist/tgz/$(upstreamtarball)
-
 # one ring to rule them all ...
+install_dir=debian/afni-atlases/usr/lib/afni/atlases/
+
+export SHELL=/bin/bash
+
 %:
 	dh $@
 
-$(upstreamtarball):
-	[ -f ../$@ ] || curl -o ../$@ $(upstreamurl)
+override_dh_install:
+	# john would make it better via install
+	# We need to install while dereferencing symlinks
+	mkdir -p $(install_dir)
+	cp -rL atlases/*.{BRIK,HEAD}* $(install_dir)
+	chmod +w -R $(install_dir)
 
-maint-clean:
-	rm -rf data
-
-maint-update-md5sum:
-	md5sum data/* > debian/origdata.md5sum
-
-maint-check-md5sum:
-	# if the check fails it means upstream changed something in the
-	# data -- in that case visit upstream webpage, figure out date of
-	# change and use it as a new upstream version (simply update Debian
-	# changelog)
-	md5sum -c debian/origdata.md5sum
-
-maint-populate-srcpkg:
-	# extract the pieces we are interested in (data and license information)
-	tar --wildcards --strip 1 -xvzf ../$(srcpkg)_$(upstreamver).orig.tar.gz
-
-get-orig-source: $(upstreamtarball)
-	# put all data files into a subdir
-	mkdir -p data
-	# extract the pieces we are interested in (data and license information)
-	tar -C data --wildcards --strip 1 -xvzf ../$(upstreamtarball) \
-		'*.HEAD*' '*.BRIK*' '*.nii*' '*README.copyright' '*Atlases.niml'
-	rm -rf data/meica.libs # carries sample nii.gz we aren't interested in ATM
-	debian/rules maint-update-md5sum
-	chmod a-x data/*.HEAD* data/*.BRIK*
-	# check integrity
-	md5sum -c debian/origdata.md5sum
-	# orig tarball, turn directory into something nicer
-	tar --transform 's,^,$(srcpkg)-$(upstreamver)/,' \
-		-cvzf $(srcpkg)_$(upstreamver).orig.tar.gz data
+override_dh_auto_configure:
+	# annex-get data -- may be the .git one would contain them as well when we produce it?
+	git annex enableremote afni_server
+	git annex get *

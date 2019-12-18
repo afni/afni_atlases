@@ -1,3 +1,9 @@
+afni-data (19.12.18-1) UNRELEASED; urgency=medium
+
+  * Fresh upstream data (still work in progress)
+
+ -- Yaroslav Halchenko <debian@onerussian.com>  Wed, 18 Dec 2019 16:02:24 -0500
+
 afni-data (0.20180120-1) data; urgency=medium
 
   * Fresh snapshot of data shipped upstream
