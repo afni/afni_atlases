@@ -1,5 +1,6 @@
 #!/bin/bash
-set -e
+set -eu
+
 datalad create afni_atlases/
 cd afni_atlases/
 
@@ -16,6 +17,11 @@ datalad save -m 'add setup script'
 
 # Add create a sibling for the afni server
 datalad create-sibling  --as-common-datasrc afni_server  --ui true  --target-url https://afni.nimh.nih.gov/pub/dist/data/afni_atlases/.git afni:/fraid/pub/dist/data/afni_atlases
+
+# Instruct git-annex that the afni_server should collect all annexed
+# files which are allowed to be redistributed (i.e. do not have
+# any distribution-restrictions git-annex metadata key)
+# git annex wanted afni_server 'not metadata=distribution-restrictions=*'
 
 # Need to modify .git/config to change "afni" to "afni_server". Not sure why
 # this happens. Other problems occur if I try to rename the command data
