@@ -1,7 +1,9 @@
 #!/bin/bash
 set -eu
 
-datalad create afni_atlases/
+# with not-yet-released datalad (0.12.0rc*). if 0.11.x then
+# not -c text2git but --text-no-annex
+datalad create -c text2git afni_atlases/
 cd afni_atlases/
 
 # Stringent conditions for what a "big" file is:
